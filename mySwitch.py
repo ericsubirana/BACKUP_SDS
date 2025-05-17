@@ -22,6 +22,7 @@ class SimpleMonitor13(simple_switch_13.SimpleSwitch13):
         super(SimpleMonitor13, self).__init__(*args, **kwargs)
         self.datapaths = {}
         self.monitor_thread = hub.spawn(self._monitor)
+        self.udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     @set_ev_cls(ofp_event.EventOFPStateChange,
                 [MAIN_DISPATCHER, DEAD_DISPATCHER])
@@ -68,7 +69,7 @@ class SimpleMonitor13(simple_switch_13.SimpleSwitch13):
                 stat.byte_count,
                 timestamp
             )
-            socket.socket().sendto(msg.encode(), (UDP_IP, UDP_PORT))
+            self.udp_socket.sendto(msg.encode(), (UDP_IP, UDP_PORT))
 
     @set_ev_cls(ofp_event.EventOFPPortStatsReply, MAIN_DISPATCHER)
     def _port_stats_reply_handler(self, ev):
@@ -88,7 +89,7 @@ class SimpleMonitor13(simple_switch_13.SimpleSwitch13):
                 stat.tx_errors,
                 timestamp
             )
-            socket.socket().sendto(msg.encode(), (UDP_IP, UDP_PORT))
+            self.udp_socket.sendto(msg.encode(), (UDP_IP, UDP_PORT))
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
