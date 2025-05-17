@@ -119,7 +119,8 @@ Where <mode> can be:
 ## Cleanup
 
 Press `Ctrl+C` in the `spoof.py` terminal to stop the Telemetry Spoofing Attack. 
-In InfluxDB execute '''DROP MEASUREMENT flows''' to delete the metrics collected.
+
+In InfluxDB execute 'DROP MEASUREMENT flows' to delete the metrics collected.
 
 # INT False-Latency MITM Attack
 
