@@ -78,21 +78,13 @@ Where <mode> can be:
 1. **Set up bridge and tap interfaces on the host machine**
 
    ```bash
-   # Create a bridge 'br1' and a tap interface 'tap0'
    sudo ip link add name br1 type bridge
    sudo ip link set br1 up
-
    sudo ip tuntap add mode tap user $USER name tap0
    sudo ip link set tap0 master br1
    sudo ip link set tap0 up
-
-   # Assign an IP address to the bridge
    sudo ip addr add 192.168.100.1/24 dev br1
-
-   # Enable IP forwarding
    sudo sysctl -w net.ipv4.ip_forward=1
-
-   # Configure NAT to masquerade bridge traffic out your main interface (replace enp0s3)
    sudo iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -o <your internet interface> -j MASQUERADE
    ```
 
