@@ -145,6 +145,12 @@ There are two new scripts using AES-CGM encryption algorithm:
 * get_timestamp_int_protected.py
 * send_int_protected.py
 
+You will have to create a .env file with the following content:
+
+```bash
+   AES_KEY = a key for encryption of 16,24 or 32 bytes of length
+   ```
+
 In order to use them follow the following workflow
 
 ### Attack Workflow
