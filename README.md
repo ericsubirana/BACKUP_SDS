@@ -205,7 +205,7 @@ In order to use them follow the following workflow
 
    This script crafts and sends a single INT packet (UDP port 5001) with a hop count and current timestamp.
 
-7. **Observe False Latency**
+7. **Observe Correct Latency**
 
    * On `h2`, the timestamp printed will reflect the original timestamp
    * In the Mininet CLI will be reflected some numbers with any sense (encrypted)
