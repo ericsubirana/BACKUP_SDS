@@ -1,28 +1,5 @@
 ![image](https://github.com/user-attachments/assets/b55b41fb-e33e-4819-a3de-7988e5adfed3)
 
-1. Modificar el fitxer `/etc/telegraf/telegraf.conf`:
-   - Canviar la línia següent: 
-   ```
-   service_address = "udp://:8094
-   ```
-
-2. (necessitam 3 terminals: A,B,C) A la terminal A executar:
-   ```
-   sudo systemctl restart telegraf
-   sudo systemctl status telegraf
-   sudo systemctl start influxdb
-   ```
-   
-3. A la terminal B:
-   ```
-   ryu-manager --verbose --ofp-tcp-listen-port 6653 mySwitch.py
-   ```
-
-4. A la terminal C:
-   ```
-   sudo mn --custom myTopo.py --topo spinenleaf --controller=remote,ip=127.0.0.1,port=6653
-   ```
-
 # Telemetry Spoofing Attack: 
 
 This project shows how to spoof telemetry data inside a Mininet network. It includes a custom spine-leaf topology, a Ryu controller, and a simple Python script that sends fake flow stats to Telegraf. The goal is to simulate how telemetry systems can be tricked by injecting false data.
