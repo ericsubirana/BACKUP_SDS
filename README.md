@@ -1,4 +1,5 @@
-![image](https://github.com/user-attachments/assets/b55b41fb-e33e-4819-a3de-7988e5adfed3)
+![diagrama](https://github.com/user-attachments/assets/ee58a51d-09d2-44f4-b68d-baa84a024e69)
+
 
 # Telemetry Spoofing Attack: 
 
