@@ -205,6 +205,101 @@ Press `Ctrl+C` in the `delay_attack.sh` terminal to stop the MITM script. The cl
 * Remove temporary Python script
 
 ---
+# INT False-Latency MITM Attack MITIGATION
+
+In order to mitigate the attack INT False-Latency we've implemented two different security features:
+* Encryption of the INT data
+* Mitigating ARP-Spoofing
+
+## Encryption of the INT data
+
+There are two new scripts using AES-CGM encryption algorithm:
+* get_timestamp_int_protected.py
+* send_int_protected.py
+
+You will have to create a .env file with the following content:
+
+```bash
+   AES_KEY = a key for encryption of 16,24 or 32 bytes of length
+   ```
+
+In order to use them follow the following workflow
+
+### Attack Workflow
+
+1. **Start the Ryu Controller**
+
+   ```bash
+   ryu-manager --verbose --ofp-tcp-listen-port 6653 mySwitch.py
+   ```
+
+2. **Launch Mininet**
+
+   ```bash
+   sudo mn --custom myTopo.py --topo spinenleaf \
+       --controller=remote,ip=127.0.0.1,port=6653 --link tc
+   ```
+
+3. **Open Host Terminals**
+
+   In the Mininet CLI, open xterms for `h2` and `h3`:
+
+   ```bash
+   mininet> xterm h2 h3
+   ```
+
+4. **Launch the MITM Attack on h1**
+
+   In the Mininet CLI, run:
+
+   ```bash
+   mininet> h1 ./delay_attack.sh
+   ```
+
+   This will:
+
+   * Apply a real delay (`tc netem`) on `h1-eth0`
+   * ARP-spoof h2⇄h3 so traffic is redirected through `h1`
+   * Drop kernel-forwarded INT packets via `iptables`
+   * Launch the Scapy MITM script to inject fake delay into INT shim headers
+
+5. **Receive and Display INT Packets on h2**
+
+   In the `h2` xterm:
+
+   ```bash
+   h2$ python3 get_timestamp_int_protected.py
+   ```
+
+   This script listens for incoming INT packets on UDP port 5001 and prints out the hop count and timestamp fields.
+
+6. **Send an INT Packet from h3**
+
+   In the `h3` xterm:
+
+   ```bash
+   h3$ python3 send_int_protected.py
+   ```
+
+   This script crafts and sends a single INT packet (UDP port 5001) with a hop count and current timestamp.
+
+7. **Observe Correct Latency**
+
+   * On `h2`, the timestamp printed will reflect the original timestamp
+   * In the Mininet CLI will be reflected some numbers with any sense (encrypted)
+
+## Mitigating ARP-Spoofing
+
+   Before exchanging INT data run anti_arp_spoofing_rules.py in order to modify swtches rules to allow only trusted IP/MAC pairs
+
+   Before step 5 of the previous workflow, execute this command on an extra terminal:
+
+   ```bash
+   sudo python3 anti_arp_spoofing_rules.py 
+   ```
+
+   Now, In the Mininet CLI the attack is not going to be working anymore 
+
 
 **Note:** This code is for educational purposes only. Always obtain proper authorization before testing on live networks.
 
