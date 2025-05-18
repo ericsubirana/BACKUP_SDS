@@ -151,18 +151,27 @@ GRANT ALL ON RYU TO ryu
 The output configuration part has to be like the following:
 
 [[outputs.influxdb]]
+
 urls = ["http://127.0.0.1:8086"]
+
 database = "RYU"
+
 username = "ryu"
+
 password = "strong_password"
 
 The output input configuration part has to be like the following:
 
 [[inputs.socket_listener]]
+
 service_address = "tcp://127.0.0.1:8094"
+
 tls_cert = "/home/vboxuser/Desktop/proj/BACKUP_SDS/telegraf.crt"           Here you put the path to the actual location of your files!
+
 tls_key = "/home/vboxuser/Desktop/proj/BACKUP_SDS/telegraf.key"            Here you put the path to the actual location of your files!
+
 tls_allowed_cacerts = ["/home/vboxuser/Desktop/proj/BACKUP_SDS/ca.crt"]    Here you put the path to the actual location of your files!
+
 data_format="influx"
 
 5. **Launch the Telemetry Spoofing Attack**
