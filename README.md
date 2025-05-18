@@ -53,6 +53,8 @@ There are two ways to run the telemetry spoofing workflow:
 
 ### Attack Workflow from inside the Mininet Network
 
+Mininet hosts are isolated by default, so they can’t talk to your real PC. Creating a bridge and using NAT lets those hosts send data through your PC’s network. That way, your spoofed telemetry from Mininet can actually reach Telegraf running on your machine.
+
 1. **Set up bridge and tap interfaces on the host machine**
 
    ```bash
