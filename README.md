@@ -103,7 +103,7 @@ Press `Ctrl+C` in the `spoof.py` terminal to stop the Telemetry Spoofing Attack.
 In InfluxDB execute 'DROP MEASUREMENT flows' to delete the metrics collected.
 
 # Telemetry Spoofing Attack MITIGATION: 
-The mitigation method used is the concactenation of a HMAC with the original telemetry message bounded to Telegraf. A script named validator recieves the data and if the HMAC concatenated is correct, it is delivered to Telegraf. The connection between the script and Telegraf is protected via TLS protocol. Telegraf authenticates via credentials to the database. Even though the first step (HMAC) solves the problem in case of an attack which comes from a remote host, we decided to protect also the connection of the Script -> Telegraf and Telegraf -> InfluxDb in case there is an internal attacker. 
+The mitigation method used is the concactenation of a HMAC with the original telemetry message bound to Telegraf. A script named validator recieves the data and if the HMAC concatenated is correct, it is delivered to Telegraf. The connection between the script and Telegraf is protected via TLS protocol. Telegraf authenticates via credentials to the database. Even though the first step (HMAC) solves the problem in case of an attack which comes from a remote host, we decided to also protect the connection of the Script -> Telegraf and Telegraf -> InfluxDb in case there is an internal attacker. 
 
 1. **Start the Modified Ryu Controller**
  
