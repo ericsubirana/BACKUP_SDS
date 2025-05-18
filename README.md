@@ -44,7 +44,7 @@ There are two ways to run the telemetry spoofing workflow:
    ```bash
    python3 spoof.py <mode>
    ```
-   Where <mode> can be:
+   Where 'mode' can be:
    * 1: Send data that does NOT match the real network topology (fake but structured).
    * 2: Send fully random data (all fields randomized, more noisy).
 
@@ -88,7 +88,7 @@ There are two ways to run the telemetry spoofing workflow:
    ```bash
    mininet> h8 python3 spoof.py <mode>
    ```
-   Where <mode> can be:
+   Where 'mode' can be:
    * 1: Send data that does NOT match the real network topology (fake but structured).
    * 2: Send fully random data (all fields randomized, more noisy).
 
