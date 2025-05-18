@@ -1,3 +1,6 @@
 # in .gitignore
 mininet/.git/
 openflow/.git/
+
+
+.env
