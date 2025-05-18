@@ -149,6 +149,7 @@ GRANT ALL ON RYU TO ryu
    sudo nano /etc/telegraf/telegraf.conf
    ```
 The output configuration part has to be like the following:
+
 [[outputs.influxdb]]
 urls = ["http://127.0.0.1:8086"]
 database = "RYU"
@@ -156,6 +157,7 @@ username = "ryu"
 password = "strong_password"
 
 The output input configuration part has to be like the following:
+
 [[inputs.socket_listener]]
 service_address = "tcp://127.0.0.1:8094"
 tls_cert = "/home/vboxuser/Desktop/proj/BACKUP_SDS/telegraf.crt"           Here you put the path to the actual location of your files!
