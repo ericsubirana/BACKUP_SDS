@@ -102,6 +102,85 @@ Press `Ctrl+C` in the `spoof.py` terminal to stop the Telemetry Spoofing Attack.
 
 In InfluxDB execute 'DROP MEASUREMENT flows' to delete the metrics collected.
 
+# Telemetry Spoofing Attack MITIGATION: 
+The mitigation method used is the concactenation of a HMAC with the original telemetry message bounded to Telegraf. A script named validator recieves the data and if the HMAC concatenated is correct, it is delivered to Telegraf. The connection between the script and Telegraf is protected via TLS protocol. Telegraf authenticates via credentials to the database. Even though the first step (HMAC) solves the problem in case of an attack which comes from a remote host, we decided to protect also the connection of the Script -> Telegraf and Telegraf -> InfluxDb in case there is an internal attacker. 
+
+1. **Start the Modified Ryu Controller**
+ 
+ ```bash
+   ryu-manager --verbose --ofp-tcp-listen-port 6653 mySwitchAuth.py
+   ```
+
+The UDP_IP and UDP_PORT values have to be changed. Now represent the IP and PORT where the validation script is listening.
+
+2. **Launch Mininet**
+
+```bash
+   sudo mn --custom myTopo.py --topo spinenleaf \
+       --controller=remote,ip=127.0.0.1,port=6653
+   ```
+
+2. **Launch Validation Script**
+
+```bash
+   sudo python3 validator.py
+   ```
+
+The UDP_IP_PROXY and UDP_PORT_PROXY values have to be the same as the ones specified in the RYU controller. The IP and PORT of the Telegraf agent can be configured aswell. By default Telegraf listens in 127.0.0.1:8094. The IP of the script (Proxy) will be the one of the host machine (not localhost) in the case we want to test and external attack, because otherwise h8 would not be able to find it.
+
+3. **Change configuration of InfluxDB**
+
+```bash
+   sudo nano /etc/influxdb/influxdb.conf
+   ```
+
+In the http part of the configuration file the two following lines have to be added:
+   - bind-address = "127.0.0.1:8086"
+   - auth-enabled = true
+    
+Afterwards, a new user and a password have to be created in InfluxDB. It can be created with the following command.
+
+CREATE USER ryu WITH PASSWORD 'strong_password'
+GRANT ALL ON RYU TO ryu
+
+4. **Change configuration of Telegraf**
+
+```bash
+   sudo nano /etc/telegraf/telegraf.conf
+   ```
+The output configuration part has to be like the following:
+[[outputs.influxdb]]
+urls = ["http://127.0.0.1:8086"]
+database = "RYU"
+username = "ryu"
+password = "strong_password"
+
+The output input configuration part has to be like the following:
+[[inputs.socket_listener]]
+service_address = "tcp://127.0.0.1:8094"
+tls_cert = "/home/vboxuser/Desktop/proj/BACKUP_SDS/telegraf.crt"           Here you put the path to the actual location of your files!
+tls_key = "/home/vboxuser/Desktop/proj/BACKUP_SDS/telegraf.key"            Here you put the path to the actual location of your files!
+tls_allowed_cacerts = ["/home/vboxuser/Desktop/proj/BACKUP_SDS/ca.crt"]    Here you put the path to the actual location of your files!
+data_format="influx"
+
+5. **Launch the Telemetry Spoofing Attack**
+
+   ```bash
+   python3 spoof.py <mode>
+   ```
+   Where 'mode' can be:
+   * 1: Send data that does NOT match the real network topology (fake but structured).
+   * 2: Send fully random data (all fields randomized, more noisy).
+
+6. **Observe the failure of the attack**
+
+You can see that the attack does not work anymore by checking the logs of the verification script. If you still not trust that the attack is mitigated, you can see the contents of the database.
+
+**Attack from inside/outside the Mininet**
+
+Check the "Attack Workflow from inside the Mininet Network" part of the ReadMe file in the case where you want to perform the attack from a host inside the Mininet.
+
+
 # INT False-Latency MITM Attack
 
 This project demonstrates an INT (In-band Network Telemetry) false-latency man-in-the-middle (MITM) attack. It uses a Ryu controller application, a custom Mininet topology, and a Scapy-based MITM script to intercept and modify INT shim headers by adding artificial delay.
